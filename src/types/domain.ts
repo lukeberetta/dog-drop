@@ -6,7 +6,6 @@ export type Theme =
   | 'British Countryside'
   | 'Parisian Maison'
   | 'Italian Riviera'
-  | 'Tokyo Streets'
   | 'Vintage Americana'
   | 'LA Cool'
   | 'Custom';

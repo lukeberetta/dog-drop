@@ -47,14 +47,6 @@ DOG RENDERING: Retro illustrated character with a slightly faded, sun-bleached f
     `.trim();
   }
 
-  if (theme === 'Tokyo Streets') {
-    return `
-STYLE: Layered graphic, bold and asymmetric composition.
-PALETTE: High contrast Black and White with one sharp accent color.
-DOG RENDERING: Bold graphic novel or manga-influenced style (Neighborhood or Undercover aesthetic).
-    `.trim();
-  }
-
   if (theme === 'Vintage Americana') {
     return `
 STYLE: Worn, distressed print with a cracked texture (like an old band tee).

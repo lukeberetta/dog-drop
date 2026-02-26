@@ -43,12 +43,6 @@ export const THEMES: { id: Theme; label: string; description: string }[] = [
       'Vintage travel poster aesthetic. Warm terracotta, cobalt blue, sun yellow palette. Dog rendered as retro illustrated character. Slightly faded, sun-bleached feel.',
   },
   {
-    id: 'Tokyo Streets',
-    label: 'Tokyo Streets',
-    description:
-      'Layered graphic, bold and asymmetric composition. High contrast — black, white, one accent color. Dog rendered in bold graphic novel / manga-influenced style.',
-  },
-  {
     id: 'Vintage Americana',
     label: 'Vintage Americana',
     description:
