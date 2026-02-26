@@ -1,0 +1,5 @@
+{
+  "name": "Dog Drop",
+  "description": "Turn your dog's photo into custom merch with AI magic.",
+  "requestFramePermissions": ["camera"]
+}
