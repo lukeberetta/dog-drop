@@ -174,9 +174,15 @@ export function Studio() {
                 className="w-full aspect-square max-w-md border-4 border-dashed border-brand-coral/30 rounded-3xl bg-white flex flex-col items-center justify-center p-8 cursor-pointer hover:bg-brand-coral/5 transition-colors group relative overflow-hidden"
               >
                 {state.photo ? (
-                  <div className="relative w-full h-full">
-                    <img src={state.photo} alt="Preview" className="w-full h-full object-cover rounded-2xl" />
-                    <div className="absolute top-4 right-4 flex gap-2">
+                  <div className="relative w-full h-full p-4">
+                    <div className="w-full h-full overflow-hidden rounded-2xl">
+                      <img 
+                        src={state.photo} 
+                        alt="Preview" 
+                        className="w-full h-full object-cover object-center" 
+                      />
+                    </div>
+                    <div className="absolute top-6 right-6 flex gap-2">
                       <div className="bg-green-500 text-white p-2 rounded-full shadow-lg">
                         <Check className="w-6 h-6" />
                       </div>
