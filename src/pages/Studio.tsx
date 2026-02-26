@@ -175,11 +175,11 @@ export function Studio() {
               >
                 {state.photo ? (
                   <div className="relative w-full h-full p-4">
-                    <div className="w-full h-full overflow-hidden rounded-2xl">
+                    <div className="relative w-full h-full overflow-hidden rounded-2xl">
                       <img 
                         src={state.photo} 
                         alt="Preview" 
-                        className="w-full h-full object-cover object-center" 
+                        className="absolute inset-0 w-full h-full object-cover object-center" 
                       />
                     </div>
                     <div className="absolute top-6 right-6 flex gap-2">
