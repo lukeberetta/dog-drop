@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { 
-  Dog, 
-  Sparkles, 
-  ChevronRight, 
-  Shirt, 
-  Coffee, 
-  Smartphone, 
-  MessageSquare 
+import {
+  Dog,
+  Sparkles,
+  ChevronRight,
+  Shirt,
+  Coffee,
+  Smartphone,
+  MessageSquare,
+  LogOut,
+  User as UserIcon
 } from 'lucide-react';
 import { playSound } from '../lib/sounds';
+import { useAuth } from '../hooks/useAuth';
 
 export function LandingPage() {
   const [showFeedback, setShowFeedback] = useState(false);
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleStart = () => {
     playSound('click');
@@ -23,19 +27,53 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
-      <header className="mb-8 text-center">
-        <h1 
+      <header className="w-full max-w-5xl mb-8 flex items-center justify-between">
+        <div
           onClick={() => navigate('/')}
-          className="text-4xl font-bold text-brand-brown flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
         >
           <Dog className="text-brand-coral w-10 h-10" />
-          Dog Drop
-        </h1>
-        <p className="text-brand-brown/60 font-medium">Custom pup merch in seconds</p>
+          <div>
+            <h1 className="text-2xl font-black text-brand-brown leading-none">Dog Drop</h1>
+            <p className="text-[10px] font-bold text-brand-brown/40 uppercase tracking-widest mt-1 hidden sm:block">Custom Merch</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          {user ? (
+            <div className="flex items-center gap-3 bg-white p-1.5 pr-4 rounded-full shadow-sm border border-gray-100">
+              <img src={user.picture} alt={user.name} className="w-8 h-8 rounded-full shadow-sm" />
+              <div className="hidden md:block">
+                <p className="text-xs font-bold text-brand-brown leading-none">{user.name}</p>
+              </div>
+              <button
+                onClick={() => {
+                  playSound('click');
+                  logout();
+                }}
+                className="p-1.5 text-brand-brown/40 hover:text-brand-coral transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                playSound('click');
+                navigate('/login');
+              }}
+              className="px-6 py-2.5 rounded-full font-bold text-sm bg-white text-brand-brown border-2 border-transparent hover:border-brand-coral/20 hover:shadow-md transition-all flex items-center gap-2"
+            >
+              <UserIcon className="w-4 h-4" />
+              Sign In
+            </button>
+          )}
+        </div>
       </header>
 
       <main className="w-full max-w-2xl flex-1 flex flex-col items-center">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full flex flex-col items-center text-center py-12"
@@ -47,7 +85,7 @@ export function LandingPage() {
             className="bg-brand-coral p-10 rounded-[3rem] shadow-2xl mb-12 relative"
           >
             <Dog className="w-32 h-32 text-white" />
-            <motion.div 
+            <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
               className="absolute -top-4 -right-4 bg-brand-brown text-white p-4 rounded-full shadow-lg"
@@ -60,9 +98,9 @@ export function LandingPage() {
             Limited Edition Merch.<br />
             <span className="text-brand-coral">Starring Your Dog.</span>
           </h2>
-          
+
           <p className="text-xl text-brand-brown/60 mb-12 max-w-lg font-medium leading-relaxed">
-            Turn your pup into a high-end streetwear icon. 
+            Turn your pup into a high-end streetwear icon.
             Custom mascots, varsity crests, and premium apparel in seconds.
           </p>
 
@@ -94,7 +132,7 @@ export function LandingPage() {
       </main>
 
       <footer className="mt-12 flex flex-col items-center gap-4">
-        <button 
+        <button
           onClick={() => {
             playSound('click');
             setShowFeedback(true);
@@ -111,7 +149,7 @@ export function LandingPage() {
       {showFeedback && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
           <div className="bg-brand-cream w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl relative p-8">
-            <button 
+            <button
               onClick={() => {
                 playSound('click');
                 setShowFeedback(false);
@@ -129,12 +167,12 @@ export function LandingPage() {
               How's your experience in the studio? We'd love to hear your thoughts on the designs and the process!
             </p>
 
-            <textarea 
+            <textarea
               placeholder="Your thoughts..."
               className="w-full h-32 px-6 py-4 rounded-2xl border-2 border-transparent bg-white shadow-sm focus:border-brand-coral outline-none font-medium transition-all mb-6 resize-none"
             />
 
-            <button 
+            <button
               onClick={() => {
                 playSound('success');
                 alert("Thanks for your feedback! (Demo only)");

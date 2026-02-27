@@ -1,14 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Check, 
-  ChevronRight, 
-  RefreshCcw, 
-  Download, 
-  Dog, 
-  Coffee, 
-  Shirt, 
-  ShoppingBag, 
+import {
+  Check,
+  ChevronRight,
+  RefreshCcw,
+  Download,
+  Dog,
+  Coffee,
+  Shirt,
+  ShoppingBag,
   Smartphone,
   Sparkles,
   ArrowLeft,
@@ -17,15 +17,20 @@ import {
   Truck,
   ShieldCheck,
   X,
-  MessageSquare
+  MessageSquare,
+  LogOut,
+  User as UserIcon
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { PRODUCTS, THEMES } from '../lib/constants';
 import { playSound } from '../lib/sounds';
 import type { AppState } from '../types/domain';
 import { useMerchGeneration } from '../hooks/useMerchGeneration';
+import { useAuth } from '../hooks/useAuth';
 
 export function Studio() {
+  const { user, logout } = useAuth();
+  const location = useLocation();
   const [state, setState] = useState<AppState>({
     step: 1,
     photo: null,
@@ -120,18 +125,17 @@ export function Studio() {
       <div className="w-full max-w-md mx-auto mb-8 px-4">
         <div className="flex justify-between mb-2">
           {[1, 2, 3].map((s) => (
-            <div 
+            <div
               key={s}
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
-                state.step >= s ? 'bg-brand-coral text-white' : 'bg-gray-200 text-gray-400'
-              }`}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${state.step >= s ? 'bg-brand-coral text-white' : 'bg-gray-200 text-gray-400'
+                }`}
             >
               {state.step > s ? <Check className="w-5 h-5" /> : s}
             </div>
           ))}
         </div>
         <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-          <motion.div 
+          <motion.div
             className="h-full bg-brand-coral"
             initial={{ width: 0 }}
             animate={{ width: `${(Math.min(state.step, 3) / 3) * 100}%` }}
@@ -143,15 +147,49 @@ export function Studio() {
 
   return (
     <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
-      <header className="mb-8 text-center">
-        <h1 
+      <header className="w-full max-w-5xl mb-8 flex items-center justify-between">
+        <div
           onClick={() => navigate('/')}
-          className="text-4xl font-bold text-brand-brown flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
         >
           <Dog className="text-brand-coral w-10 h-10" />
-          Dog Drop
-        </h1>
-        <p className="text-brand-brown/60 font-medium">Custom pup merch in seconds</p>
+          <div>
+            <h1 className="text-2xl font-black text-brand-brown leading-none">Dog Drop</h1>
+            <p className="text-[10px] font-bold text-brand-brown/40 uppercase tracking-widest mt-1 hidden sm:block">Studio</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          {user ? (
+            <div className="flex items-center gap-3 bg-white p-1.5 pr-4 rounded-full shadow-sm border border-gray-100">
+              <img src={user.picture} alt={user.name} className="w-8 h-8 rounded-full shadow-sm" />
+              <div className="hidden md:block">
+                <p className="text-xs font-bold text-brand-brown leading-none">{user.name}</p>
+              </div>
+              <button
+                onClick={() => {
+                  playSound('click');
+                  logout();
+                }}
+                className="p-1.5 text-brand-brown/40 hover:text-brand-coral transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                playSound('click');
+                navigate('/login', { state: { from: location } });
+              }}
+              className="px-6 py-2.5 rounded-full font-bold text-sm bg-white text-brand-brown border-2 border-transparent hover:border-brand-coral/20 hover:shadow-md transition-all flex items-center gap-2"
+            >
+              <UserIcon className="w-4 h-4" />
+              Sign In
+            </button>
+          )}
+        </div>
       </header>
 
       {renderProgress()}
@@ -159,14 +197,14 @@ export function Studio() {
       <main className="w-full max-w-2xl flex-1 flex flex-col items-center">
         <AnimatePresence mode="wait">
           {state.step === 1 && (
-            <motion.div 
+            <motion.div
               key="step1"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               className="w-full flex flex-col items-center"
             >
-              <div 
+              <div
                 onClick={() => {
                   playSound('click');
                   fileInputRef.current?.click();
@@ -176,17 +214,17 @@ export function Studio() {
                 {state.photo ? (
                   <div className="relative w-full h-full p-4">
                     <div className="relative w-full h-full overflow-hidden rounded-2xl">
-                      <img 
-                        src={state.photo} 
-                        alt="Preview" 
-                        className="absolute inset-0 w-full h-full object-cover object-center" 
+                      <img
+                        src={state.photo}
+                        alt="Preview"
+                        className="absolute inset-0 w-full h-full object-cover object-center"
                       />
                     </div>
                     <div className="absolute top-6 right-6 flex gap-2">
                       <div className="bg-green-500 text-white p-2 rounded-full shadow-lg">
                         <Check className="w-6 h-6" />
                       </div>
-                      <button 
+                      <button
                         onClick={(e) => {
                           e.stopPropagation();
                           playSound('click');
@@ -210,19 +248,19 @@ export function Studio() {
                     </button>
                   </>
                 )}
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleFileUpload} 
-                  accept="image/*" 
-                  className="hidden" 
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/*"
+                  className="hidden"
                 />
               </div>
 
               <div className="mt-8 w-full max-w-md">
                 <label className="block text-sm font-bold text-brand-brown/60 mb-2 uppercase tracking-wider">Dog's Name (Optional)</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="e.g. Buddy"
                   value={state.dogName}
                   onChange={(e) => setState(prev => ({ ...prev, dogName: e.target.value }))}
@@ -241,7 +279,7 @@ export function Studio() {
                     Next Step <ChevronRight className="w-5 h-5" />
                   </motion.button>
                 )}
-                <button 
+                <button
                   onClick={() => navigate('/')}
                   className="text-brand-brown/50 font-bold flex items-center gap-2 hover:text-brand-brown transition-colors"
                 >
@@ -252,7 +290,7 @@ export function Studio() {
           )}
 
           {state.step === 2 && (
-            <motion.div 
+            <motion.div
               key="step2"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -268,9 +306,8 @@ export function Studio() {
                       playSound('click');
                       setState(prev => ({ ...prev, product: p.id }));
                     }}
-                    className={`bg-white p-6 rounded-3xl shadow-sm border-4 transition-all flex flex-col items-center gap-4 hover:shadow-md ${
-                      state.product === p.id ? 'border-brand-coral scale-105' : 'border-transparent'
-                    }`}
+                    className={`bg-white p-6 rounded-3xl shadow-sm border-4 transition-all flex flex-col items-center gap-4 hover:shadow-md ${state.product === p.id ? 'border-brand-coral scale-105' : 'border-transparent'
+                      }`}
                   >
                     <div className="text-brand-coral">
                       <p.icon className="w-12 h-12" />
@@ -299,7 +336,7 @@ export function Studio() {
           )}
 
           {state.step === 3 && (
-            <motion.div 
+            <motion.div
               key="step3"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -315,9 +352,8 @@ export function Studio() {
                       playSound('click');
                       setState(prev => ({ ...prev, theme: t.id }));
                     }}
-                    className={`bg-white p-6 rounded-3xl shadow-sm border-4 transition-all flex flex-col items-center justify-center text-center gap-2 hover:shadow-md min-h-[100px] ${
-                      state.theme === t.id ? 'border-brand-coral scale-105' : 'border-transparent'
-                    }`}
+                    className={`bg-white p-6 rounded-3xl shadow-sm border-4 transition-all flex flex-col items-center justify-center text-center gap-2 hover:shadow-md min-h-[100px] ${state.theme === t.id ? 'border-brand-coral scale-105' : 'border-transparent'
+                      }`}
                   >
                     <span className="font-bold text-lg leading-tight">{t.label}</span>
                   </button>
@@ -325,14 +361,14 @@ export function Studio() {
               </div>
 
               {state.theme === 'Custom' && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-8 w-full max-w-md mx-auto"
                 >
                   <label className="block text-sm font-bold text-brand-brown/60 mb-2 uppercase tracking-wider">Describe your vibe</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="e.g. Cyberpunk Samurai or Space Pirate"
                     value={state.customTheme}
                     onChange={(e) => setState(prev => ({ ...prev, customTheme: e.target.value }))}
@@ -358,14 +394,14 @@ export function Studio() {
           )}
 
           {state.step === 4 && (
-            <motion.div 
+            <motion.div
               key="step4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="fixed inset-0 bg-brand-cream z-50 flex flex-col items-center justify-center p-8 text-center"
             >
               <motion.div
-                animate={{ 
+                animate={{
                   scale: [1, 1.2, 1],
                   rotate: [0, 10, -10, 0]
                 }}
@@ -380,13 +416,13 @@ export function Studio() {
                 {loadingMessage}
               </h2>
               <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden mb-8">
-                <motion.div 
+                <motion.div
                   className="h-full bg-brand-coral"
                   animate={{ x: [-256, 256] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                 />
               </div>
-              <button 
+              <button
                 onClick={() => setState(prev => ({ ...prev, step: 3 }))}
                 className="text-brand-brown/40 font-bold hover:text-brand-brown transition-colors"
               >
@@ -396,7 +432,7 @@ export function Studio() {
           )}
 
           {state.step === 5 && (resultImage || error) && (
-            <motion.div 
+            <motion.div
               key="step5"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -410,13 +446,13 @@ export function Studio() {
                   <h2 className="text-2xl font-bold text-brand-brown mb-8">
                     {error}
                   </h2>
-                  <button 
+                  <button
                     onClick={generateMerch}
                     className="w-full bg-brand-coral text-white py-5 rounded-2xl font-bold text-xl shadow-lg hover:bg-brand-orange transition-all flex items-center justify-center gap-2"
                   >
                     <RefreshCcw className="w-6 h-6" /> Try Again
                   </button>
-                  <button 
+                  <button
                     onClick={reset}
                     className="mt-4 text-brand-brown/40 font-bold hover:text-brand-brown transition-colors"
                   >
@@ -430,11 +466,11 @@ export function Studio() {
                       {state.dogName}'s Masterpiece
                     </h2>
                   )}
-                  
+
                   <div className="relative w-full max-w-md aspect-square bg-white rounded-[2rem] shadow-2xl p-4 mb-8 overflow-hidden group">
-                    <img 
-                      src={resultImage!} 
-                      alt="Result" 
+                    <img
+                      src={resultImage!}
+                      alt="Result"
                       className="w-full h-full object-contain rounded-2xl"
                     />
                     {isGenerating && (
@@ -445,9 +481,13 @@ export function Studio() {
                   </div>
 
                   <div className="w-full max-w-md space-y-4">
-                    <button 
+                    <button
                       onClick={() => {
                         playSound('click');
+                        if (!user) {
+                          navigate('/login', { state: { from: location } });
+                          return;
+                        }
                         setState(prev => ({ ...prev, showCheckout: true }));
                       }}
                       className="w-full bg-brand-brown text-white py-5 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl hover:bg-black transition-all text-xl"
@@ -456,15 +496,15 @@ export function Studio() {
                     </button>
 
                     <div className="flex gap-4">
-                      <a 
-                        href={resultImage!} 
+                      <a
+                        href={resultImage!}
                         download={`${state.dogName || 'dog'}-merch.png`}
                         onClick={() => playSound('click')}
                         className="flex-1 bg-brand-coral text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg hover:bg-brand-orange transition-all"
                       >
                         <Download className="w-5 h-5" /> Download
                       </a>
-                      <button 
+                      <button
                         onClick={reset}
                         className="flex-1 bg-white border-2 border-brand-brown text-brand-brown py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-gray-50 transition-all"
                       >
@@ -477,15 +517,15 @@ export function Studio() {
                         <Sparkles className="w-4 h-4 text-brand-coral" /> Want to change something?
                       </p>
                       <div className="relative">
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           placeholder="e.g. Add a retro filter or make it blue"
                           value={refinePrompt}
                           onChange={(e) => setRefinePrompt(e.target.value)}
                           onKeyDown={(e) => e.key === 'Enter' && handleRefine()}
                           className="w-full pl-6 pr-14 py-4 rounded-2xl border-2 border-transparent bg-white shadow-sm focus:border-brand-coral outline-none font-medium transition-all"
                         />
-                        <button 
+                        <button
                           onClick={handleRefine}
                           disabled={!refinePrompt || isGenerating}
                           className="absolute right-2 top-2 bottom-2 aspect-square bg-brand-brown text-white rounded-xl flex items-center justify-center disabled:opacity-50 hover:bg-black transition-all"
@@ -503,24 +543,24 @@ export function Studio() {
                   {[...Array(20)].map((_, i) => (
                     <motion.div
                       key={i}
-                      initial={{ 
-                        top: -20, 
+                      initial={{
+                        top: -20,
                         left: `${Math.random() * 100}%`,
                         rotate: 0,
                         scale: Math.random() * 0.5 + 0.5
                       }}
-                      animate={{ 
+                      animate={{
                         top: '120%',
                         rotate: 360,
                       }}
-                      transition={{ 
+                      transition={{
                         duration: Math.random() * 2 + 2,
                         repeat: Infinity,
                         delay: Math.random() * 5
                       }}
                       className="absolute w-4 h-4 rounded-sm"
-                      style={{ 
-                        backgroundColor: ['#FF7F50', '#FF6347', '#4A3728', '#FDFCF8'][i % 4] 
+                      style={{
+                        backgroundColor: ['#FF7F50', '#FF6347', '#4A3728', '#FDFCF8'][i % 4]
                       }}
                     />
                   ))}
@@ -533,19 +573,19 @@ export function Studio() {
 
       <AnimatePresence>
         {state.showCheckout && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               className="bg-brand-cream w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl relative"
             >
-              <button 
+              <button
                 onClick={() => {
                   playSound('click');
                   setState(prev => ({ ...prev, showCheckout: false }));
@@ -573,8 +613,12 @@ export function Studio() {
 
                 <div className="space-y-4 mb-8">
                   <div className="flex items-center gap-3 text-brand-brown/70">
+                    <UserIcon className="w-5 h-5 text-brand-coral" />
+                    <span className="text-sm font-medium">Ordering as <span className="font-bold text-brand-brown">{user?.name}</span></span>
+                  </div>
+                  <div className="flex items-center gap-3 text-brand-brown/70">
                     <Truck className="w-5 h-5 text-brand-coral" />
-                    <span className="text-sm font-medium">Free Shipping (3-5 business days)</span>
+                    <span className="text-sm font-medium">Free Shipping to <span className="font-bold text-brand-brown">your pack</span></span>
                   </div>
                   <div className="flex items-center gap-3 text-brand-brown/70">
                     <ShieldCheck className="w-5 h-5 text-brand-coral" />
@@ -582,7 +626,7 @@ export function Studio() {
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={() => {
                     playSound('success');
                     alert("Order placed! (Demo only)");
@@ -602,7 +646,7 @@ export function Studio() {
       </AnimatePresence>
 
       <footer className="mt-12 flex flex-col items-center gap-4">
-        <button 
+        <button
           onClick={() => {
             playSound('click');
             setState(prev => ({ ...prev, showFeedback: true }));
@@ -618,19 +662,19 @@ export function Studio() {
 
       <AnimatePresence>
         {state.showFeedback && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               className="bg-brand-cream w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl relative p-8"
             >
-              <button 
+              <button
                 onClick={() => {
                   playSound('click');
                   setState(prev => ({ ...prev, showFeedback: false }));
@@ -648,12 +692,12 @@ export function Studio() {
                 How's your experience in the studio? We'd love to hear your thoughts on the designs and the process!
               </p>
 
-              <textarea 
+              <textarea
                 placeholder="Your thoughts..."
                 className="w-full h-32 px-6 py-4 rounded-2xl border-2 border-transparent bg-white shadow-sm focus:border-brand-coral outline-none font-medium transition-all mb-6 resize-none"
               />
 
-              <button 
+              <button
                 onClick={() => {
                   playSound('success');
                   alert("Thanks for your feedback! (Demo only)");
